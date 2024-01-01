@@ -1,16 +1,28 @@
-const express = require ('express');
-const htmlRoutes = require('./routes/htmlRoutes');
-const apiRoutes = require('./routes/apiRoutes');
+const express = require('express');
+const path = require('path');
+const api = require('./routes/index.js');
 
-//Initializing app and port
+const PORT = 3001;
+
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-//Setting up middleware
-app.use(edxpress.static('public'));
+// Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
-app.use(express.urlencoded({extended: true }));
-app.use('/', htmlRoutes);
+app.use(express.urlencoded({ extended: true }));
+app.use('/api', api);
 
-//Starting port
-app.listen(PORT, () => console.log(`Listening on PORT: ${PORT}`));
+app.use(express.static('public'));
+
+// GET Route for homepage
+app.get('/', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/index.html'))
+);
+
+// GET Route for feedback page
+app.get('/notes', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/pages/notes.html'))
+);
+
+app.listen(PORT, () =>
+  console.log(`App listening at http://localhost:${PORT}`)
+);
